@@ -1,0 +1,39 @@
+services:
+  backend:
+    build: ./note-backend
+    ports:
+      - "3002:3002"
+    depends_on:
+      - db
+    env_file:
+      - ./note-backend/.env
+    volumes:
+      - ./note-backend:/backend
+      - /backend/node_modules
+    environment:
+      - NODE_ENV=development
+
+    command: npm run dev
+        
+  frontend:
+    build: ./note-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./note-app:/app
+      - /app/node-modules
+    environment:
+      - NODE_ENV=development 
+    command: npm run dev
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: note-app
+    volumes:
+      - db_data:/var/lib/mysql
+  
+volumes:
+  db_data:
